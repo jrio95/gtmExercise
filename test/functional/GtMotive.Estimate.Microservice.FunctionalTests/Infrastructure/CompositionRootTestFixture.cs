@@ -2,10 +2,14 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Api;
+using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
 using GtMotive.Estimate.Microservice.Infrastructure;
+using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
+using Testcontainers.MongoDb;
 using Xunit;
 
 [assembly: CLSCompliant(false)]
@@ -14,7 +18,8 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
 {
     public sealed class CompositionRootTestFixture : IDisposable, IAsyncLifetime
     {
-        private readonly ServiceProvider _serviceProvider;
+        private ServiceProvider _serviceProvider;
+        private MongoDbContainer _mongoDbContainer;
 
         public CompositionRootTestFixture()
         {
@@ -23,23 +28,43 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
                 .AddEnvironmentVariables()
                 .Build();
 
-            var services = new ServiceCollection();
             Configuration = configuration;
-            ConfigureServices(services);
-            services.AddSingleton<IConfiguration>(configuration);
-            _serviceProvider = services.BuildServiceProvider();
         }
 
         public IConfiguration Configuration { get; }
 
         public async Task InitializeAsync()
         {
-            await Task.CompletedTask;
+            _mongoDbContainer = new MongoDbBuilder()
+                .WithImage("mongo:latest")
+                .WithUsername("admin")
+                .WithPassword("password")
+                .Build();
+
+            await _mongoDbContainer.StartAsync();
+
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            services.AddSingleton<IMongoClient>(_ => new MongoClient(_mongoDbContainer.GetConnectionString()));
+            services.AddLogging();
+            services.AddBaseInfrastructure(true);
+            services.AddSingleton<IMongoClient>(_ =>
+                new MongoClient(_mongoDbContainer.GetConnectionString()));
+
+            services.AddSingleton(sp =>
+            {
+                var client = sp.GetRequiredService<IMongoClient>();
+                return client.GetDatabase("functionalTestdb");
+            });
+
+            _serviceProvider = services.BuildServiceProvider();
         }
 
         public async Task DisposeAsync()
         {
-            await Task.CompletedTask;
+            await _mongoDbContainer.StopAsync();
+            await _mongoDbContainer.DisposeAsync();
+            _serviceProvider?.Dispose();
         }
 
         public async Task UsingHandlerForRequest<TRequest>(Func<IRequestHandler<TRequest, Unit>, Task> handlerAction)
@@ -95,6 +120,7 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddApiDependencies();
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddLogging();
             services.AddBaseInfrastructure(true);
         }
