@@ -1,26 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
+using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
-using GtMotive.Estimate.Microservice.Domain.Entities;
 using MediatR;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Queries.GetAllVehicles
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles
 {
     /// <summary>
     /// GetAvailableVehiclesQueryHandler.
     /// </summary>
-    public class GetAvailableVehiclesQueryHandler : IRequestHandler<GetAvailableVehiclesQuery, IEnumerable<Vehicle>>
+    public class GetAvailableVehiclesQueryHandler : IRequestHandler<GetAvailableVehiclesQuery, IEnumerable<VehicleDto>>
     {
         private readonly IVehicleRepository _repository;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetAvailableVehiclesQueryHandler"/> class.
         /// </summary>
         /// <param name="repository">The repository.</param>
-        public GetAvailableVehiclesQueryHandler(IVehicleRepository repository)
+        /// <param name="mapper">The mapper.</param>
+        public GetAvailableVehiclesQueryHandler(IVehicleRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -29,9 +33,9 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Queries.GetAllVehicles
         /// <param name="request">The query.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of available vehicles.</returns>
-        public async Task<IEnumerable<Vehicle>> Handle(GetAvailableVehiclesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<VehicleDto>> Handle(GetAvailableVehiclesQuery request, CancellationToken cancellationToken)
         {
-            return await _repository.GetAvailableAsync();
+            return _mapper.Map<IEnumerable<VehicleDto>>(await _repository.GetAvailableAsync());
         }
     }
 }

@@ -1,14 +1,14 @@
 ﻿using System;
 using FluentResults;
-using GtMotive.Estimate.Microservice.Domain.Entities;
+using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
 using MediatR;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.CreateVehicle
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle
 {
     /// <summary>
     /// CreateVehicleCommand.
     /// </summary>
-    public class CreateVehicleCommand : IRequest<Result<Vehicle>>
+    public class CreateVehicleCommand : IRequest<Result<VehicleDto>>
     {
         /// <summary>
         /// Gets or sets PlateNumber.

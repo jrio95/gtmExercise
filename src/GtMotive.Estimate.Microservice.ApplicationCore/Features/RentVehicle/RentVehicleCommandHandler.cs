@@ -6,12 +6,12 @@ using GtMotive.Estimate.Microservice.ApplicationCore.ValidationServices;
 using GtMotive.Estimate.Microservice.Domain.Entities;
 using MediatR;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
 {
     /// <summary>
     /// RentVehicleCommandHandler.
     /// </summary>
-    public class RentVehicleCommandHandler : IRequestHandler<RentVehicleCommand, Result<Vehicle>>
+    public class RentVehicleCommandHandler : IRequestHandler<RentVehicleCommand, Result>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IClientRepository _clientRepository;
@@ -31,7 +31,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Response from the request.</returns>
-        public async Task<Result<Vehicle>> Handle(RentVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(RentVehicleCommand request, CancellationToken cancellationToken)
         {
             if (request == null)
             {
@@ -63,7 +63,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
             await _vehicleRepository.UpdateAsync(vehicle);
             await _clientRepository.UpdateAsync(client);
 
-            return vehicle;
+            return Result.Ok();
         }
 
         private async Task<Result<Client>> CreateNewClient(string clientIdCardNumber)

@@ -3,9 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.Api.Requests;
-using GtMotive.Estimate.Microservice.ApplicationCore.Commands.CreateVehicle;
-using GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle;
-using GtMotive.Estimate.Microservice.ApplicationCore.Queries.GetAllVehicles;
+using GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle;
+using GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles;
+using GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle;
+using GtMotive.Estimate.Microservice.ApplicationCore.Features.ReturnVehicle;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ namespace GtMotive.Estimate.Microservice.Api.Controllers.Vehicle
             var command = _mapper.Map<CreateVehicleCommand>(request);
 
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok() : BadRequest(result.Errors.Select(e => e.Message));
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors.Select(e => e.Message));
         }
 
         [HttpGet]

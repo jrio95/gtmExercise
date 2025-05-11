@@ -1,14 +1,13 @@
 ﻿using System;
 using FluentResults;
-using GtMotive.Estimate.Microservice.Domain.Entities;
 using MediatR;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.ReturnVehicle
 {
     /// <summary>
     /// ReturnVehicleCommand.
     /// </summary>
-    public class ReturnVehicleCommand : IRequest<Result<Vehicle>>
+    public class ReturnVehicleCommand : IRequest<Result>
     {
         /// <summary>
         /// Gets or sets vehicle Id.

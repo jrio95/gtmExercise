@@ -3,15 +3,14 @@ using System.Threading.Tasks;
 using FluentResults;
 using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
 using GtMotive.Estimate.Microservice.ApplicationCore.ValidationServices;
-using GtMotive.Estimate.Microservice.Domain.Entities;
 using MediatR;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.ReturnVehicle
 {
     /// <summary>
     /// ReturnVehicleCommandHandler.
     /// </summary>
-    public class ReturnVehicleCommandHandler : IRequestHandler<ReturnVehicleCommand, Result<Vehicle>>
+    public class ReturnVehicleCommandHandler : IRequestHandler<ReturnVehicleCommand, Result>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IClientRepository _clientRepository;
@@ -31,7 +30,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Response from the request.</returns>
-        public async Task<Result<Vehicle>> Handle(ReturnVehicleCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ReturnVehicleCommand request, CancellationToken cancellationToken)
         {
             if (request == null)
             {
@@ -57,7 +56,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Commands.RentVehicle
             await _vehicleRepository.UpdateAsync(vehicle);
             await _clientRepository.UpdateAsync(client);
 
-            return vehicle;
+            return Result.Ok();
         }
     }
 }
