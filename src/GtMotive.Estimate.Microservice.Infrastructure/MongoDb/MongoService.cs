@@ -1,18 +1,23 @@
-﻿using GtMotive.Estimate.Microservice.Infrastructure.MongoDb.Settings;
-using Microsoft.Extensions.Options;
+﻿using GtMotive.Estimate.Microservice.Domain.Entities;
 using MongoDB.Driver;
 
 namespace GtMotive.Estimate.Microservice.Infrastructure.MongoDb
 {
     public class MongoService
     {
-        public MongoService(IOptions<MongoDbSettings> options)
+        private readonly IMongoDatabase _database;
+
+        public MongoService(IMongoDatabase database)
         {
-            MongoClient = new MongoClient(options.Value.ConnectionString);
+            _database = database;
 
             // Add call to RegisterBsonClasses() method.
         }
 
-        public MongoClient MongoClient { get; }
+        public IMongoCollection<Vehicle> Vehicles =>
+            _database.GetCollection<Vehicle>("vehicles");
+
+        public IMongoCollection<Client> Clients =>
+            _database.GetCollection<Client>("clients");
     }
 }
