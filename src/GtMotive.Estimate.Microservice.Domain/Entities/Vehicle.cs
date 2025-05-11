@@ -89,6 +89,11 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
                 return Result.Fail("This vehicle is already rented");
             }
 
+            if (clientIdToRent == Guid.Empty)
+            {
+                return Result.Fail("Client does not exist");
+            }
+
             IsRented = true;
             RentedById = clientIdToRent;
 
