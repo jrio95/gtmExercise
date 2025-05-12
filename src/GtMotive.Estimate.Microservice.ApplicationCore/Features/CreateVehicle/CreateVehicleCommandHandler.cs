@@ -3,8 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentResults;
 using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
-using GtMotive.Estimate.Microservice.Domain.Entities;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces;
 using MediatR;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle
@@ -14,17 +13,17 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle
     /// </summary>
     public class CreateVehicleCommandHandler : IRequestHandler<CreateVehicleCommand, Result<VehicleDto>>
     {
-        private readonly IVehicleRepository _repository;
+        private readonly IVehicleService _vehicleService;
         private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateVehicleCommandHandler"/> class.
         /// </summary>
-        /// <param name="repository">The repository.</param>
+        /// <param name="vehicleService">The vehicle service.</param>
         /// <param name="mapper">The mapper.</param>
-        public CreateVehicleCommandHandler(IVehicleRepository repository, IMapper mapper)
+        public CreateVehicleCommandHandler(IVehicleService vehicleService, IMapper mapper)
         {
-            _repository = repository;
+            _vehicleService = vehicleService;
             _mapper = mapper;
         }
 
@@ -39,15 +38,10 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle
                 return Result.Fail("Request can not be null");
             }
 
-            var vehicleResult = Vehicle.Create(request.PlateNumber, request.ManufactureDate);
-            if (vehicleResult.IsFailed)
-            {
-                return Result.Fail<VehicleDto>(vehicleResult.Errors);
-            }
-
-            await _repository.AddAsync(vehicleResult.Value);
-
-            return _mapper.Map<VehicleDto>(vehicleResult.Value);
+            var vehicleResult = await _vehicleService.CreateVehicleAsync(request.PlateNumber, request.ManufactureDate);
+            return vehicleResult.IsSuccess
+                ? _mapper.Map<VehicleDto>(vehicleResult.Value) :
+                Result.Fail(vehicleResult.Errors);
         }
     }
 }

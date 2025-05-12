@@ -46,7 +46,7 @@ namespace GtMotive.Estimate.Microservice.Api.Controllers.Vehicle
         public async Task<IActionResult> Rent([FromRoute] Guid id, [FromBody] RentVehicleRequest request)
         {
             var command = _mapper.Map<RentVehicleCommand>(request);
-            command.VechicleId = id;
+            command.VehicleId = id;
 
             var result = await _mediator.Send(command);
 
@@ -60,7 +60,7 @@ namespace GtMotive.Estimate.Microservice.Api.Controllers.Vehicle
         {
             var result = await _mediator.Send(new ReturnVehicleCommand()
             {
-                VechicleId = id
+                VehicleId = id
             });
 
             return result.IsSuccess

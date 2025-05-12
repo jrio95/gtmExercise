@@ -45,16 +45,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Services
             return client;
         }
 
-        /// <summary>
-        /// Updates the client.
-        /// </summary>
-        /// <param name="client">The client.</param>
-        /// <returns>Task.</returns>
-        public async Task UpdateClientAsync(Client client)
-        {
-            await _clientRepository.UpdateAsync(client);
-        }
-
         private async Task<Result<Client>> CreateNewClient(string clientIdCardNumber)
         {
             var clientToCreateResult = Client.Create(clientIdCardNumber);

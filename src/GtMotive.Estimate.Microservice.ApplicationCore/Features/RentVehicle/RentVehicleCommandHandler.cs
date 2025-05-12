@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using FluentResults;
 using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces;
-using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
-using GtMotive.Estimate.Microservice.ApplicationCore.ValidationServices;
 using MediatR;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
@@ -13,18 +11,15 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
     /// </summary>
     public class RentVehicleCommandHandler : IRequestHandler<RentVehicleCommand, Result>
     {
-        private readonly IVehicleRepository _vehicleRepository;
-        private readonly IClientService _clientService;
+        private readonly IVehicleService _vehicleService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentVehicleCommandHandler"/> class.
         /// </summary>
-        /// <param name="vehicleRepository">The vehicle repository.</param>
-        /// <param name="clientService">The client service.</param>
-        public RentVehicleCommandHandler(IVehicleRepository vehicleRepository, IClientService clientService)
+        /// <param name="vehicleService">The vehicle service.</param>
+        public RentVehicleCommandHandler(IVehicleService vehicleService)
         {
-            _vehicleRepository = vehicleRepository;
-            _clientService = clientService;
+            _vehicleService = vehicleService;
         }
 
         /// <summary>Handles a request.</summary>
@@ -33,31 +28,9 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
         /// <returns>Response from the request.</returns>
         public async Task<Result> Handle(RentVehicleCommand request, CancellationToken cancellationToken)
         {
-            if (request == null)
-            {
-                return Result.Fail("Rent vehicle command is null");
-            }
-
-            var vehicle = await _vehicleRepository.GetByIdAsync(request.VechicleId);
-            var clientResult = await _clientService.GetOrCreateClientAsync(request.ClientIdCardNumber);
-            if (clientResult.IsFailed)
-            {
-                return Result.Fail(clientResult.Errors);
-            }
-
-            var client = clientResult.Value;
-            RentVehicleValidationService.Validate(vehicle);
-            var rentResult = Result.Merge(vehicle.Rent(client.Id), client.RentVehicle(vehicle.Id));
-
-            if (rentResult.IsFailed)
-            {
-                return rentResult;
-            }
-
-            await _vehicleRepository.UpdateAsync(vehicle);
-            await _clientService.UpdateClientAsync(client);
-
-            return Result.Ok();
+            return request == null
+                ? Result.Fail("Rent vehicle command is null")
+                : await _vehicleService.RentVehicleAsync(request.VehicleId, request.ClientIdCardNumber);
         }
     }
 }

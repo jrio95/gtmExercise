@@ -14,6 +14,8 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features
         /// </summary>
         public VehicleProfile()
         {
+            CreateMap<Vehicle, CreateVehicleResponse>();
+            CreateMap<Vehicle, GetAvailableVehiclesResponse>();
             CreateMap<Vehicle, VehicleDto>();
         }
     }

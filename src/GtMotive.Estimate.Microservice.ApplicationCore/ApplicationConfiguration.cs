@@ -24,6 +24,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore
         {
             services.AddAutoMapper(typeof(VehicleProfile));
             services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IVehicleService, VehicleService>();
 
             return services;
         }

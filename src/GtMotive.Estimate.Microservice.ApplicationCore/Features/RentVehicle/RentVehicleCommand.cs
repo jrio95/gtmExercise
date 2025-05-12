@@ -12,7 +12,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
         /// <summary>
         /// Gets or sets vehicle Id.
         /// </summary>
-        public Guid VechicleId { get; set; }
+        public Guid VehicleId { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier card number.

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces;
 using MediatR;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles
@@ -13,17 +13,17 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles
     /// </summary>
     public class GetAvailableVehiclesQueryHandler : IRequestHandler<GetAvailableVehiclesQuery, IEnumerable<VehicleDto>>
     {
-        private readonly IVehicleRepository _repository;
+        private readonly IVehicleService _vehicleService;
         private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetAvailableVehiclesQueryHandler"/> class.
         /// </summary>
-        /// <param name="repository">The repository.</param>
+        /// <param name="vehicleService">The vehicle service.</param>
         /// <param name="mapper">The mapper.</param>
-        public GetAvailableVehiclesQueryHandler(IVehicleRepository repository, IMapper mapper)
+        public GetAvailableVehiclesQueryHandler(IVehicleService vehicleService, IMapper mapper)
         {
-            _repository = repository;
+            _vehicleService = vehicleService;
             _mapper = mapper;
         }
 
@@ -35,7 +35,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles
         /// <returns>List of available vehicles.</returns>
         public async Task<IEnumerable<VehicleDto>> Handle(GetAvailableVehiclesQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IEnumerable<VehicleDto>>(await _repository.GetAvailableAsync());
+            return _mapper.Map<IEnumerable<VehicleDto>>(await _vehicleService.GetAvailableAsync());
         }
     }
 }

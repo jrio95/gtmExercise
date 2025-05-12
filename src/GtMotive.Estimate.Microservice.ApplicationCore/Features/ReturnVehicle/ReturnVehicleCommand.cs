@@ -12,6 +12,6 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.ReturnVehicle
         /// <summary>
         /// Gets or sets vehicle Id.
         /// </summary>
-        public Guid VechicleId { get; set; }
+        public Guid VehicleId { get; set; }
     }
 }
