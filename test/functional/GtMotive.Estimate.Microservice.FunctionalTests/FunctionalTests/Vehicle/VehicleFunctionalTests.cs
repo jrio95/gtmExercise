@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
 using GtMotive.Estimate.Microservice.ApplicationCore.Features.CreateVehicle;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.FunctionalTests.Infrastructure;
 using Xunit;
 
@@ -49,7 +49,7 @@ namespace GtMotive.Estimate.Microservice.FunctionalTests.FunctionalTests.Vehicle
                 {
                     var vehicle = await repo.GetByIdAsync(createdVehicle.Id);
                     vehicle.Should().NotBeNull();
-                    vehicle.PlateNumber.Should().Be(plate);
+                    vehicle.PlateNumber.Value.Should().Be(plate);
                     vehicle.ManufactureDate.Date.Should().Be(manufactureDate.Date);
                 });
             });

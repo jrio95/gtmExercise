@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using MediatR;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.GetAllVehicles

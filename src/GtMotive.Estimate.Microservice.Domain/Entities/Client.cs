@@ -1,5 +1,8 @@
 ﻿using System;
 using FluentResults;
+using GtMotive.Estimate.Microservice.Domain.Base;
+using GtMotive.Estimate.Microservice.Domain.Entities.ValueObjects;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace GtMotive.Estimate.Microservice.Domain.Entities
 {
@@ -11,17 +14,17 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
-        /// <param name="plateNumber">plate number.</param>
-        private Client(string idCardNumber)
+        /// <param name="cardNumber">card number.</param>
+        private Client(CardNumber cardNumber)
             : base()
         {
-            IdCardNumber = idCardNumber;
+            CardNumber = cardNumber;
         }
 
         /// <summary>
-        /// Gets PlateNumber.
+        /// Gets CardNumber.
         /// </summary>
-        public string IdCardNumber { get; private set; }
+        public CardNumber CardNumber { get; private set; }
 
         /// <summary>
         /// Gets the rented vehicle identifier.
@@ -37,17 +40,19 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
         /// <value>
         /// Bool indicating if the client can rent a car.
         /// </value>
+        [BsonIgnore]
         public bool CanRent => RentedVehicleId == null;
 
         /// <summary>
         /// Create method.
         /// </summary>
-        /// <param name="idCardNumber">idCardNumber.</param>
+        /// <param name="cardNumber">cardNumber.</param>
         /// <returns>Entity of the Client encapsulated in result.</returns>
-        public static Result<Client> Create(string idCardNumber)
+        public static Result<Client> Create(string cardNumber)
         {
-            return string.IsNullOrEmpty(idCardNumber)
-                ? (Result<Client>)Result.Fail("No id card found for the client") : Result.Ok(new Client(idCardNumber));
+            var cardNumberResult = CardNumber.Create(cardNumber);
+            return cardNumberResult.IsFailed
+                ? (Result<Client>)Result.Fail(cardNumberResult.Errors) : Result.Ok(new Client(cardNumberResult.Value));
         }
 
         /// <summary>

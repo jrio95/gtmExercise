@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GtMotive.Estimate.Microservice.ApplicationCore.Dtos;
-using DomainVehicle = GtMotive.Estimate.Microservice.Domain.Entities.Vehicle;
+using GtMotive.Estimate.Microservice.Domain.Entities;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features
 {
@@ -14,7 +14,7 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features
         /// </summary>
         public VehicleProfile()
         {
-            CreateMap<DomainVehicle, VehicleDto>();
+            CreateMap<Vehicle, VehicleDto>();
         }
     }
 }

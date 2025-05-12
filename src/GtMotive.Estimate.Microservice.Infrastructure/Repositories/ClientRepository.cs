@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Entities;
 using GtMotive.Estimate.Microservice.Infrastructure.MongoDb;
 using MongoDB.Driver;
@@ -24,7 +24,7 @@ namespace GtMotive.Estimate.Microservice.Infrastructure.Repositories
 
         public async Task<Client> GetByCardNumberAsync(string idCardNumber)
         {
-            var filter = Builders<Client>.Filter.Eq(c => c.IdCardNumber, idCardNumber);
+            var filter = Builders<Client>.Filter.Eq(c => c.CardNumber.Value, idCardNumber);
             return await _mongoService.Clients.Find(filter).FirstOrDefaultAsync();
         }
 

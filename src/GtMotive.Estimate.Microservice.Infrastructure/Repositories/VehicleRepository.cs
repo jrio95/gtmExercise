@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Domain.Entities;
 using GtMotive.Estimate.Microservice.Infrastructure.MongoDb;
 using MongoDB.Driver;

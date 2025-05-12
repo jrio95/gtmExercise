@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.ApplicationCore.ValidationServices;
 using MediatR;
 

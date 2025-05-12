@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using FluentResults;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.ApplicationCore.ValidationServices;
-using GtMotive.Estimate.Microservice.Domain.Entities;
 using MediatR;
 
 namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
@@ -14,17 +14,17 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
     public class RentVehicleCommandHandler : IRequestHandler<RentVehicleCommand, Result>
     {
         private readonly IVehicleRepository _vehicleRepository;
-        private readonly IClientRepository _clientRepository;
+        private readonly IClientService _clientService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentVehicleCommandHandler"/> class.
         /// </summary>
         /// <param name="vehicleRepository">The vehicle repository.</param>
-        /// <param name="clientRepository">The client repository.</param>
-        public RentVehicleCommandHandler(IVehicleRepository vehicleRepository, IClientRepository clientRepository)
+        /// <param name="clientService">The client service.</param>
+        public RentVehicleCommandHandler(IVehicleRepository vehicleRepository, IClientService clientService)
         {
             _vehicleRepository = vehicleRepository;
-            _clientRepository = clientRepository;
+            _clientService = clientService;
         }
 
         /// <summary>Handles a request.</summary>
@@ -39,19 +39,13 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
             }
 
             var vehicle = await _vehicleRepository.GetByIdAsync(request.VechicleId);
-            var client = await _clientRepository.GetByCardNumberAsync(request.ClientIdCardNumber);
-
-            if (client == null)
+            var clientResult = await _clientService.GetOrCreateClientAsync(request.ClientIdCardNumber);
+            if (clientResult.IsFailed)
             {
-                var createdClientResult = await CreateNewClient(request.ClientIdCardNumber);
-                if (createdClientResult.IsFailed)
-                {
-                    return Result.Fail("Error while creating the client");
-                }
-
-                client = createdClientResult.Value;
+                return Result.Fail(clientResult.Errors);
             }
 
+            var client = clientResult.Value;
             RentVehicleValidationService.Validate(vehicle);
             var rentResult = Result.Merge(vehicle.Rent(client.Id), client.RentVehicle(vehicle.Id));
 
@@ -61,23 +55,9 @@ namespace GtMotive.Estimate.Microservice.ApplicationCore.Features.RentVehicle
             }
 
             await _vehicleRepository.UpdateAsync(vehicle);
-            await _clientRepository.UpdateAsync(client);
+            await _clientService.UpdateClientAsync(client);
 
             return Result.Ok();
-        }
-
-        private async Task<Result<Client>> CreateNewClient(string clientIdCardNumber)
-        {
-            var clientToCreateResult = Client.Create(clientIdCardNumber);
-            if (clientToCreateResult.IsFailed)
-            {
-                return clientToCreateResult;
-            }
-
-            var client = clientToCreateResult.Value;
-            await _clientRepository.AddAsync(client);
-
-            return client;
         }
     }
 }

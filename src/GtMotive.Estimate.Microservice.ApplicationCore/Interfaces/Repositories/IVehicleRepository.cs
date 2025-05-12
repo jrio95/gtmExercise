@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Domain.Entities;
 
-namespace GtMotive.Estimate.Microservice.ApplicationCore.Repositories
+namespace GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories
 {
     /// <summary>
     /// IVehicleRepository.

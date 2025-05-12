@@ -1,5 +1,7 @@
 ﻿using System;
 using FluentResults;
+using GtMotive.Estimate.Microservice.Domain.Base;
+using GtMotive.Estimate.Microservice.Domain.Entities.ValueObjects;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace GtMotive.Estimate.Microservice.Domain.Entities
@@ -14,7 +16,7 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
         /// </summary>
         /// <param name="plateNumber">The plate number.</param>
         /// <param name="manufacturedDate">The manufactured date.</param>
-        private Vehicle(string plateNumber, DateTime manufacturedDate)
+        private Vehicle(PlateNumber plateNumber, DateTime manufacturedDate)
             : base()
         {
             PlateNumber = plateNumber;
@@ -25,7 +27,7 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
         /// <summary>
         /// Gets PlateNumber.
         /// </summary>
-        public string PlateNumber { get; private set; }
+        public PlateNumber PlateNumber { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether gets IsRented.
@@ -60,16 +62,17 @@ namespace GtMotive.Estimate.Microservice.Domain.Entities
         /// <returns>Result of the created instance.</returns>
         public static Result<Vehicle> Create(string plate, DateTime manufacturedDate)
         {
-            if (string.IsNullOrWhiteSpace(plate))
+            var plateNumberResult = PlateNumber.Create(plate);
+            if (plateNumberResult.IsFailed)
             {
-                return Result.Fail("Plate number is required");
+                return Result.Fail(plateNumberResult.Errors);
             }
             else if (manufacturedDate == default)
             {
                 return Result.Fail("Manufacture date is required.");
             }
 
-            return Result.Ok(new Vehicle(plate, manufacturedDate));
+            return Result.Ok(new Vehicle(plateNumberResult.Value, manufacturedDate));
         }
 
         /// <summary>

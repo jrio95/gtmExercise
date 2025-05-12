@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GtMotive.Estimate.Microservice.Api;
-using GtMotive.Estimate.Microservice.ApplicationCore.Repositories;
+using GtMotive.Estimate.Microservice.ApplicationCore.Interfaces.Repositories;
 using GtMotive.Estimate.Microservice.Infrastructure;
 using GtMotive.Estimate.Microservice.Infrastructure.Repositories;
 using MediatR;

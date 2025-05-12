@@ -2,17 +2,17 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace GtMotive.Estimate.Microservice.Domain.Entities
+namespace GtMotive.Estimate.Microservice.Domain.Base
 {
     /// <summary>
     /// EntityBase.
     /// </summary>
-    public class EntityBase
+    public abstract class EntityBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityBase"/> class.
         /// </summary>
-        public EntityBase()
+        protected EntityBase()
         {
             Id = Guid.NewGuid();
         }

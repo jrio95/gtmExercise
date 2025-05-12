@@ -34,7 +34,7 @@ namespace GtMotive.Estimate.Microservice.Api.Controllers.Vehicle
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors.Select(e => e.Message));
         }
 
-        [HttpGet]
+        [HttpGet("GetAvailableVehicles")]
         public async Task<IActionResult> GetAvailableVehicles()
         {
             var result = await _mediator.Send(new GetAvailableVehiclesQuery());
